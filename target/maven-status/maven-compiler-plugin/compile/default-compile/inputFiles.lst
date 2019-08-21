@@ -1,0 +1,10 @@
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/ReadOnlyInterceptor.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/FhirTesterConfig.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/JpaRestfulServer.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/FhirServerConfigDstu3.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/FhirServerConfigDstu2.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/FhirServerConfigR4.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/HapiProperties.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/ApplicationContext.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/MetadataProvider.java
+/Users/jminieri/Projects/drug-formulary-ri/src/main/java/ca/uhn/fhir/jpa/starter/FhirServerConfigCommon.java

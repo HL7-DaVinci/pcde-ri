@@ -1,0 +1,10 @@
+ca/uhn/fhir/jpa/starter/FhirServerConfigR4.class
+ca/uhn/fhir/jpa/starter/FhirServerConfigDstu3.class
+ca/uhn/fhir/jpa/starter/ApplicationContext.class
+ca/uhn/fhir/jpa/starter/FhirServerConfigCommon.class
+ca/uhn/fhir/jpa/starter/HapiProperties.class
+ca/uhn/fhir/jpa/starter/FhirTesterConfig.class
+ca/uhn/fhir/jpa/starter/JpaRestfulServer.class
+ca/uhn/fhir/jpa/starter/FhirServerConfigDstu2.class
+ca/uhn/fhir/jpa/starter/MetadataProvider.class
+ca/uhn/fhir/jpa/starter/ReadOnlyInterceptor.class

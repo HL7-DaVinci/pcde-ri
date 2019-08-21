@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  pcde:
+    image: pcde
+    ports:
+      - '8080:8080'
