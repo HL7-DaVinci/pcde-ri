@@ -33,11 +33,9 @@ public class MetadataProvider extends JpaConformanceProviderR4 {
     calendar.set(2019, 8, 5, 0, 0, 0);
     metadata.setDate(calendar.getTime());
 
-    // TODO: add once we have a github repo
-    // CapabilityStatementSoftwareComponent software =
-    //   new CapabilityStatementSoftwareComponent();
-    // software.setName("https://github.com/HL7-DaVinci/drug-formulary");
-    // metadata.setSoftware(software);
+    CapabilityStatementSoftwareComponent software = new CapabilityStatementSoftwareComponent();
+    software.setName("https://github.com/HL7-DaVinci/pcde-ri");
+    metadata.setSoftware(software);
 
     metadata.addImplementationGuide("http://build.fhir.org/ig/HL7/davinci-pcde/index.html");
     metadata.addImplementationGuide("https://wiki.hl7.org/Da_Vinci_Payer_Coverage_Decision_FHIR_IG_Proposal");
@@ -52,16 +50,12 @@ public class MetadataProvider extends JpaConformanceProviderR4 {
     for(CapabilityStatementRestComponent rest : originalRests) {
       List<CapabilityStatementRestResourceComponent> resources = rest.getResource();
       for(CapabilityStatementRestResourceComponent resource : resources) {
-        //List<ResourceInteractionComponent> interactions = new ArrayList<ResourceInteractionComponent>();
-        // interactions.add(new ResourceInteractionComponent().setCode(TypeRestfulInteraction.HISTORYINSTANCE));
-        // interactions.add(new ResourceInteractionComponent().setCode(TypeRestfulInteraction.HISTORYTYPE));
-        // interactions.add(new ResourceInteractionComponent().setCode(TypeRestfulInteraction.READ));
-        // interactions.add(new ResourceInteractionComponent().setCode(TypeRestfulInteraction.SEARCHTYPE));
-        // interactions.add(new ResourceInteractionComponent().setCode(TypeRestfulInteraction.VREAD));
-        // resource.setInteraction(interactions);
-
         if(resource.getType() == "CarePlan") {
-          resource.setProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan");
+          resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-careplan");
+        } if (resource.getType()  == "Composition") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-composition");
+        } if (resource.getType() == "Bundle") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-pcde-bundle");
         }
       }
     }
