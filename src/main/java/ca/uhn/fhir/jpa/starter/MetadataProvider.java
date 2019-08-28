@@ -56,6 +56,12 @@ public class MetadataProvider extends JpaConformanceProviderR4 {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-composition");
         } if (resource.getType() == "Bundle") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-pcde-bundle");
+        } if (resource.getType() == "Claim") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-claim");
+        } if (resource.getType() == "ClaimResponse") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-claimresponse");
+        } if (resource.getType() == "Patient") {
+          resource.setProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient");
         }
       }
     }
