@@ -60,9 +60,9 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
             resourceType.startsWith("Claim") ||
             resourceType.startsWith("CarePlan") ||
             resourceType.startsWith("Composition") ||
+            resourceType.startsWith("CodeSystem") ||
             resourceType.startsWith("DocumentCode") ||
             resourceType.startsWith("StructureDefinition") ||
-            resourceType.startsWith("CodeSystem") ||
             resourceType.startsWith("ValueSet") ||
             resourceType.startsWith("Bundle");
     }
