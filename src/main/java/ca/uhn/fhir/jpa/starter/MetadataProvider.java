@@ -52,16 +52,24 @@ public class MetadataProvider extends JpaConformanceProviderR4 {
       for(CapabilityStatementRestResourceComponent resource : resources) {
         if(resource.getType() == "CarePlan") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-careplan");
-        } if (resource.getType()  == "Composition") {
+        } else if (resource.getType()  == "Composition") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-composition");
-        } if (resource.getType() == "Bundle") {
+        } else if (resource.getType() == "Bundle") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-pcde-bundle");
-        } if (resource.getType() == "Claim") {
+        } else if (resource.getType() == "Claim") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-claim");
-        } if (resource.getType() == "ClaimResponse") {
+        } else if (resource.getType() == "ClaimResponse") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-claimresponse");
-        } if (resource.getType() == "Patient") {
+        } else if (resource.getType() == "Patient") {
           resource.setProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient");
+        } else if (resource.getType() == "CommunicationRequest") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-communicationrequest");
+        } else if (resource.getType() == "Communication") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-communication");
+        } else if (resource.getType() == "Organization") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-hrex/StructureDefinition/hrex-organization");
+        } else if (resource.getType() == "PractitionerRole") {
+          resource.setProfile("http://hl7.org/fhir/us/davinci-hrex/StructureDefinition/hrex-practitionerrole");
         }
       }
     }
