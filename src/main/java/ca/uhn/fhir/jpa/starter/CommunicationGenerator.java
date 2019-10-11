@@ -17,7 +17,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class CommunicationGenerator {
     private JSONObject communicationRequest;
     private RequestHandler requestHandler;
-    private final String baseUrl = "http://localhost:8080/fhir/";//"https://davinci-pcde-ri.logicahealth.org/fhir/";
+    private final String baseUrl = "https://davinci-pcde-ri.logicahealth.org/fhir/";
 
     public CommunicationGenerator(JSONObject cr) {
         this.communicationRequest = cr;
