@@ -66,7 +66,8 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
             resourceType.startsWith("Bundle") ||
             resourceType.startsWith("ValueSet") ||
             resourceType.startsWith("CommunicationRequest") ||
-            resourceType.startsWith("Communication");
+            resourceType.startsWith("Communication") ||
+            resourceType.startsWith("Organization");
     }
 
 }

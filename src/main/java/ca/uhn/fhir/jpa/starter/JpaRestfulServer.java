@@ -20,6 +20,7 @@ import ca.uhn.fhir.rest.server.HardcodedServerAddressStrategy;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.CorsInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.jpa.starter.CommunicationInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Meta;
@@ -117,6 +118,12 @@ public class JpaRestfulServer extends RestfulServer {
         loggingInterceptor.setErrorMessageFormat(HapiProperties.getLoggerErrorFormat());
         loggingInterceptor.setLogExceptions(HapiProperties.getLoggerLogExceptions());
         this.registerInterceptor(loggingInterceptor);
+
+        /*
+         *  Add interceptor for communication
+         */
+         CommunicationInterceptor communicationInterceptor = new CommunicationInterceptor();
+         this.registerInterceptor(communicationInterceptor);
 
         /*
          * If you are hosting this server at a specific DNS name, the server will try to
