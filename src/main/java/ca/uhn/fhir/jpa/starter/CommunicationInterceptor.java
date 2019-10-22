@@ -25,14 +25,11 @@ public class CommunicationInterceptor extends InterceptorAdapter {
     * for each incoming request before any processing is done
     */
    @Override
-   public boolean incomingRequestPostProcessed(RequestDetails theRequestDetails, HttpServletRequest theRequest, HttpServletResponse theResponse) {
-      // Need to detect where the request is being posted. If to Communiction request then can parse
-
-      System.out.println(theResponse);
-      System.out.println(theRequestDetails);
+   public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
+      // Need to detect where the request is being posted. If to PCDE then can parse
       String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
       System.out.println(endPoint);
-      if (endPoint.equals("CommunicationRequest")) {
+      if (endPoint.equals("PCDE")) {
           String requestString = parseRequest(theRequest);
           System.out.println(requestString);
           try {
