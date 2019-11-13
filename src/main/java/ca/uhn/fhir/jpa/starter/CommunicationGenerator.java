@@ -17,20 +17,18 @@ import javax.net.ssl.HttpsURLConnection;
 public class CommunicationGenerator {
     private JSONObject communicationRequest;
     private RequestHandler requestHandler;
-    private final String baseUrl = "https://davinci-pcde-ri.logicahealth.org/fhir/";
+    private String serverAddress;
 
-    public CommunicationGenerator(JSONObject cr) {
+    public CommunicationGenerator(JSONObject cr, String address) {
         this.communicationRequest = cr;
-        requestHandler = new RequestHandler(baseUrl);
+        serverAddress = address;
+        requestHandler = new RequestHandler(serverAddress);
     }
     public String makeCommunication(){
         System.out.println("Making communication");
         JSONObject communication = null;
-        System.out.println(communicationRequest);
         JSONObject subject = (JSONObject) communicationRequest.get("subject");
-        System.out.println(subject);
         String reference = subject.get("reference").toString();
-        System.out.println(reference);
         try {
           // Use this patient to search for the payload
           String patientID = reference.substring(reference.lastIndexOf("/") + 1);
@@ -44,7 +42,6 @@ public class CommunicationGenerator {
           JSONObject sender = (JSONObject) communication.get("sender");
           sender.put("reference", ((JSONObject) communicationRequest.get("sender")).get("reference").toString());
 
-          // NOTE: Bundle ID is currently hard coded since the bundle will normally be generated on the fly
           String payload = getBundle(patientID);
           String encoded = Base64.getEncoder().encodeToString(payload.getBytes());
           JSONArray pl = (JSONArray) communication.get("payload");
@@ -70,11 +67,38 @@ public class CommunicationGenerator {
     }
     public String getBundle(String patientID) {
         // NOTE: This does not show how to generate the bundle, but rather focuses on the
-        // Communication and handling of the PCDE document
+        // Communication and handling of the PCDE document. It does retrieve the bundle based on the
+        // referenced patient
         String payload = "";
-        if (patientID.equals("14")) {
+        String bundleID = "";
+        try {
+            payload = requestHandler.sendGet("Bundle", "?type=document&_format=json");
+            JSONParser parser = new JSONParser();
+            JSONObject bundles = (JSONObject) parser.parse(payload);
+            JSONArray entries = (JSONArray) bundles.get("entry");
+
+            for (int i = 0; i < entries.size(); i++) {
+                JSONObject bundle = ((JSONObject)((JSONObject) (entries.get(i))).get("resource"));
+                JSONArray internalEntry = (JSONArray) bundle.get("entry");
+                for (int j = 0; j < internalEntry.size(); j++) {
+                    JSONObject resource = ((JSONObject)((JSONObject) internalEntry.get(j)).get("resource"));
+                    if (resource.get("resourceType").equals("Patient")) {
+                        if (resource.get("id").equals(patientID)) {
+                            bundleID = (String) bundle.get("id");
+                            System.out.println("Found the bundle for the patient");
+                            System.out.println("Corresponding Bundle ID:" + bundleID);
+                        }
+                    }
+                }
+
+            }
+        } catch(Exception e) {
+            System.out.println("Exeption retrieving bundles");
+        }
+
+        if (!bundleID.equals("")) {
             try {
-                payload = requestHandler.sendGet("Bundle", "1?_format=xml");
+                payload = requestHandler.sendGet("Bundle", bundleID + "?_format=xml");
             } catch(Exception e) {
                 System.out.println("Exeption getting bundle: " + e);
             }

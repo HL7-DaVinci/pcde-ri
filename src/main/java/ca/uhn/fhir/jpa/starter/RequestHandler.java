@@ -16,10 +16,9 @@ public class RequestHandler {
     String baseUrl;
     private final String USER_AGENT = "Mozilla/5.0";
     public RequestHandler(String baseUrl) {
-        this.baseUrl = baseUrl;
+        this.baseUrl = baseUrl + "/";
     }
     public String sendGet(String endPoint, String params) throws Exception {
-        // 'https://davinci-pcde-ri.logicahealth.org/fhir/Patient?given='+given+'&family='+family+'&birthdate='+bdate
         String url = baseUrl + endPoint + "/" + params;
         System.out.println("Sending Get to: " + url);
         URL obj = new URL(url);

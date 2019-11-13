@@ -120,12 +120,6 @@ public class JpaRestfulServer extends RestfulServer {
         this.registerInterceptor(loggingInterceptor);
 
         /*
-         *  Add interceptor for communication
-         */
-         CommunicationInterceptor communicationInterceptor = new CommunicationInterceptor();
-         this.registerInterceptor(communicationInterceptor);
-
-        /*
          * If you are hosting this server at a specific DNS name, the server will try to
          * figure out the FHIR base URL based on what the web container tells it, but
          * this doesn't always work. If you are setting links in your search bundles that
@@ -135,6 +129,13 @@ public class JpaRestfulServer extends RestfulServer {
         if (serverAddress != null && serverAddress.length() > 0) {
             setServerAddressStrategy(new HardcodedServerAddressStrategy(serverAddress));
         }
+
+        /*
+         *  Add interceptor for communication
+         */
+         CommunicationInterceptor communicationInterceptor = new CommunicationInterceptor();
+         communicationInterceptor.setAddress(serverAddress);
+         this.registerInterceptor(communicationInterceptor);
 
         /*
          * If you are using DSTU3+, you may want to add a terminology uploader, which allows

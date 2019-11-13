@@ -15,6 +15,7 @@ import ca.uhn.fhir.jpa.starter.CommunicationGenerator;
 public class CommunicationInterceptor extends InterceptorAdapter {
 
    private int myRequestCount;
+   private String serverAddress;
 
    public int getRequestCount() {
       return myRequestCount;
@@ -28,19 +29,14 @@ public class CommunicationInterceptor extends InterceptorAdapter {
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
       // Need to detect where the request is being posted. If to PCDE then can parse
       String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
-      System.out.println(endPoint);
       if (endPoint.equals("PCDE")) {
           String requestString = parseRequest(theRequest);
-          System.out.println(requestString);
           try {
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(requestString);
-            System.out.println(((JSONObject)((JSONArray)((JSONObject)((JSONObject)((JSONArray)((JSONObject)((JSONArray)json.get("payload")).get(0)).get("extension")).get(0)).get("valueCodeableConcept")).get("coding")).get(0)).get("code").toString());
             if (((JSONObject)((JSONArray)((JSONObject)((JSONObject)((JSONArray)((JSONObject)((JSONArray)json.get("payload")).get(0)).get("extension")).get(0)).get("valueCodeableConcept")).get("coding")).get(0)).get("code").toString().equals("pcde")) {
-                System.out.println(json);
-                CommunicationGenerator cg = new CommunicationGenerator(json);
+                CommunicationGenerator cg = new CommunicationGenerator(json, serverAddress);
                 String com = cg.makeCommunication();
-                System.out.println(com);
                 PrintWriter out = theResponse.getWriter();
                 theResponse.setContentType("application/json");
                 theResponse.setCharacterEncoding("UTF-8");
@@ -55,7 +51,9 @@ public class CommunicationInterceptor extends InterceptorAdapter {
       }
       return true;
    }
-
+   public void setAddress(String address) {
+       serverAddress = address;
+   }
    public String parseRequest(HttpServletRequest r) {
       String targetString = "";
       try {
