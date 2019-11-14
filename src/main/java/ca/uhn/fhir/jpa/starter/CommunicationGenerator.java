@@ -72,9 +72,9 @@ public class CommunicationGenerator {
         String payload = "";
         String bundleID = "";
         try {
-            payload = requestHandler.sendGet("Bundle", "?type=document&_format=json");
+            String payloadBundles = requestHandler.sendGet("Bundle", "?type=document&_format=json");
             JSONParser parser = new JSONParser();
-            JSONObject bundles = (JSONObject) parser.parse(payload);
+            JSONObject bundles = (JSONObject) parser.parse(payloadBundles);
             JSONArray entries = (JSONArray) bundles.get("entry");
 
             for (int i = 0; i < entries.size(); i++) {
