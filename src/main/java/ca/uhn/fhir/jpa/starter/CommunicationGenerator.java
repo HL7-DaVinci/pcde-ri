@@ -51,6 +51,7 @@ public class CommunicationGenerator {
             String given = "";
             String family = "";
             String bdate = "";
+            String identifier = "";
             try {
                 given = name.get("given").get(0).getValue().toString();
             } catch (Exception e) {
@@ -67,7 +68,25 @@ public class CommunicationGenerator {
                 System.out.println("No birthdate");
             }
             try {
-              String patientResponse = requestHandler.sendGet("Patient", "?_format=json&given="+given+"&family="+family+"&birthdate="+bdate);
+                identifier = patientInfo.get("identifier").get(0).get("value").getValue().toString();
+            } catch(Exception e) {
+                System.out.println("No identifier");
+            }
+            try {
+              String request = "?_format=json";
+              if (!identifier.equals("")) {
+                  request += "&identifier="+identifier;
+              }
+              if (!given.equals("")) {
+                  request += "&given="+given;
+              }
+              if (!family.equals("")) {
+                  request += "&family="+family;
+              }
+              if (!bdate.equals("")) {
+                  request += "&birthdate="+bdate;
+              }
+              String patientResponse = requestHandler.sendGet("Patient", request);
               JSONParser parser = new JSONParser();
               JSONWrapper responseBundle = new JSONWrapper(parser.parse(patientResponse));
               System.out.println("TOTAL: " + responseBundle.get("total").getValue());
