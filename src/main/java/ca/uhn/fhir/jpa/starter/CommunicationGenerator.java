@@ -32,6 +32,10 @@ public class CommunicationGenerator {
         String patientID = "";
         JSONWrapper cr = communicationRequest;
         JSONWrapper communication = null;
+        JSONWrapper endpoint = null;
+        JSONWrapper org1 = null;
+        JSONWrapper org2 = null;
+        JSONParser parser = new JSONParser();
         if (communicationRequest.get("resourceType").getValue().equals("CommunicationRequest")) {
             // cr = communicationRequest;
             String reference = cr.get("subject").get("reference").getValue().toString();
@@ -43,8 +47,19 @@ public class CommunicationGenerator {
                     patientInfo = communicationRequest.get("entry").get(i).get("resource");
                 } else if (communicationRequest.get("entry").get(i).get("resource").get("resourceType").getValue().equals("CommunicationRequest")) {
                     cr = communicationRequest.get("entry").get(i).get("resource");
+                } else if (communicationRequest.get("entry").get(i).get("resource").get("resourceType").getValue().equals("Endpoint")) {
+                    if (!communicationRequest.get("entry").get(i).get("resource").get("address").toString().equals("https://davinci-pcde-ri.logicahealth.org/fhir/PCDE")) {
+                        endpoint = communicationRequest.get("entry").get(i).get("resource");
+                    }
+                } else if (communicationRequest.get("entry").get(i).get("resource").get("resourceType").getValue().equals("Organization")) {
+                    if (org1 == null) {
+                        org1 = communicationRequest.get("entry").get(i).get("resource");
+                    } else {
+                        org2 = communicationRequest.get("entry").get(i).get("resource");
+                    }
                 }
             }
+            System.out.println("ENDPOINT ADDRESS" + endpoint.get("address").toString());
             // Need to somehow confirm that this is the actual patient. If more get returned need to
             // update communication accordingly
             JSONWrapper name = patientInfo.get("name").get(0);
@@ -87,7 +102,7 @@ public class CommunicationGenerator {
                   request += "&birthdate="+bdate;
               }
               String patientResponse = requestHandler.sendGet("Patient", request);
-              JSONParser parser = new JSONParser();
+
               JSONWrapper responseBundle = new JSONWrapper(parser.parse(patientResponse));
               System.out.println("TOTAL: " + responseBundle.get("total").getValue());
               if ((long)responseBundle.get("total").getValue() == 1) {
@@ -95,6 +110,7 @@ public class CommunicationGenerator {
               } else if ((long)responseBundle.get("total").getValue() > 1) {
                   // Found multiple patients. More info required
                   theResponse.setStatus(413);
+                  System.out.println("Response Bundle: " + responseBundle);
                   String payload = "Found multiple patients matching the provided demographics";
                   String encoded = Base64.getEncoder().encodeToString(payload.getBytes());
                   communication = new JSONWrapper(getCommunicationErrorStatus());
@@ -137,9 +153,30 @@ public class CommunicationGenerator {
           String encoded = Base64.getEncoder().encodeToString(payload.getBytes());
           communication.get("payload").get(0).get("contentAttachment").put("data", encoded);
           theResponse.setStatus(200); // Successfully created everything
+
+          // Create Bundle Here
+          JSONWrapper bundleCom = new JSONWrapper(getBundleSkeleton());
+          // Communication NOTE: These URLs need to be updated with real ones
+          bundleCom.get("entry").get(0).put("fullUrl", "https://davinci-pcde-ri.logicahealth.org/fhir/Bundle/1");
+          bundleCom.get("entry").get(0).put("resource", communication);
+          // Patient
+          bundleCom.get("entry").get(1).put("fullUrl", "https://davinci-pcde-ri.logicahealth.org/fhir/Patient/" + patientID);
+          bundleCom.get("entry").get(1).put("resource", new JSONWrapper(parser.parse(patient)));
+          // Organization
+          bundleCom.get("entry").get(2).put("fullUrl", "https://davinci-pcde-ri.logicahealth.org/fhir/Organization/");
+          bundleCom.get("entry").get(2).put("resource", org1);
+          // Organization
+          bundleCom.get("entry").get(3).put("fullUrl", "https://davinci-pcde-ri.logicahealth.org/fhir/Organization/");
+          bundleCom.get("entry").get(3).put("resource", org2);
+          try {
+              System.out.println("Sending to endpoint" + endpoint.get("address").toString());
+              requestHandler.sendPost(endpoint.get("address").toString(), bundleCom.toString());
+          } catch (Exception e) {
+              System.out.println(e);
+          }
+
         } catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("Exception finding patient: " + e);
+          System.out.println("Exception building communication: " + e);
         }
         return communication.toString();
     }
@@ -154,6 +191,17 @@ public class CommunicationGenerator {
         }
         return null;
 
+    }
+    public JSONObject getBundleSkeleton() {
+        String base = "{\"resourceType\":\"Bundle\",\"id\":\"pcde-communication-example\",\"meta\":{\"lastUpdated\":\"2019-07-21T11:01:00+05:00\"},\"type\":\"collection\",\"timestamp\":\"2019-07-21T11:01:00+05:00\",\"entry\":[{\"fullUrl\":\"empty\",\"resource\":\"empty\"},{\"fullUrl\":\"empty\",\"resource\":\"empty\"},{\"fullUrl\":\"empty\",\"resource\":\"empty\"},{\"fullUrl\":\"empty\",\"resource\":\"empty\"}]}";
+        JSONParser parser = new JSONParser();
+        try {
+          JSONObject bundle = (JSONObject) parser.parse(base);
+          return bundle;
+        } catch (Exception e) {
+            System.out.println("Error creating bundle skeleton " + e.getMessage());
+        }
+        return null;
     }
     public JSONObject getCommunicationErrorStatus() {
         String base ="{\"resourceType\" : \"Communication\",\"text\" : {\"status\" : \"generated\",\"div\" : \"\"},\"basedOn\" : [{\"reference\" : \"Bundle/pcde-communicationrequest-example\"}],\"status\" : \"completed\",\"recipient\" : [  {    \"reference\" : \"Organization/1\"  }],\"sender\" : {  \"reference\" : \"Organization/2\"},\"payload\" : [  {    \"extension\" : [      {        \"url\" : \"http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type\",        \"valueCodeableConcept\" : {\"coding\" : [  {    \"system\" : \"http://hl7.org/fhir/us/davinci-pcde/CodeSystem/PCDEDocumentCode\",    \"code\" : \"pcde\"  }]        }      }    ],    \"contentAttachment\" : {      \"contentType\" : \"application/fhir+xml\",      \"data\" : \"\"    }  }]}";

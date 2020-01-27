@@ -55,8 +55,6 @@ public class CommunicationInterceptor extends InterceptorAdapter {
    public void sendCommunicationResponse(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
        CommunicationGenerator cg = new CommunicationGenerator((JSONObject)json.getValue(), serverAddress);
        String com = cg.makeCommunication(theResponse);
-       System.out.println("SENDING RESPONSE: ");
-       System.out.println(com);
        PrintWriter out = theResponse.getWriter();
        theResponse.setContentType("application/json");
        theResponse.setCharacterEncoding("UTF-8");
