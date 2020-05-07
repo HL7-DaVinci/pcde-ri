@@ -48,6 +48,10 @@ public class JSONWrapper {
         jsonObject.put(key, newValue);
         value = jsonObject;
     }
+    public void add(Object newValue) {
+        jsonArray.add(newValue);
+        value = jsonArray;
+    }
     public Object getValue() {
         return value;
     }

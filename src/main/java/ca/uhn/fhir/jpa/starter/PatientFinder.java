@@ -25,6 +25,9 @@ public class PatientFinder {
         requestHandler = new RequestHandler(serverAddress);
     }
     public String findPatient(HttpServletResponse theResponse, JSONWrapper json) {
+        return findPatientAsJSON(theResponse, json).toString();
+    }
+    public JSONWrapper findPatientAsJSON(HttpServletResponse theResponse, JSONWrapper json) {
         JSONWrapper patientInfo = json.get("parameter").get(1).get("resource");
         String patientID = "";
         JSONWrapper endpoint = null;
@@ -71,21 +74,20 @@ public class PatientFinder {
           String patientResponse = requestHandler.sendGet("Patient", request);
 
           JSONWrapper responseBundle = new JSONWrapper(parser.parse(patientResponse));
-          System.out.println("TOTAL: " + responseBundle.get("total").getValue());
           if ((long)responseBundle.get("total").getValue() == 1) {
-              return responseBundle.get("entry").get(0).toString();
+              return responseBundle.get("entry").get(0);
           } else if ((long)responseBundle.get("total").getValue() > 1) {
               // Found multiple patients. More info required
               theResponse.setStatus(413);
-              return "413";
+              return new JSONWrapper("413");
           } else {
               theResponse.setStatus(404);
-              return "404";
+              return new JSONWrapper("404");
           }
         } catch (Exception e) {
             System.out.println("Error making communication " + e);
             theResponse.setStatus(404);
-            return "404";
+            return new JSONWrapper("404");
         }
     }
 }

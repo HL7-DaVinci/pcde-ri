@@ -10,7 +10,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import ca.uhn.fhir.jpa.starter.CommunicationGenerator;
+import ca.uhn.fhir.jpa.starter.ParameterGenerator;
 import ca.uhn.fhir.jpa.starter.PatientFinder;
 
 import ca.uhn.fhir.jpa.starter.JSONWrapper;
@@ -38,7 +38,7 @@ public class MatchInterceptor extends InterceptorAdapter {
            JSONWrapper json = new JSONWrapper((JSONObject) parser.parse(requestString));
            if (json.get("resourceType").getValue().equals("Parameters")) {
                if (json.get("parameter").get(1).get("resource").get("resourceType").getValue().equals("Patient")) {
-                   findPatient(json, theResponse);
+                   findPatientAndCoverage(json, theResponse);
                }
            } else {
                return true;
@@ -46,7 +46,6 @@ public class MatchInterceptor extends InterceptorAdapter {
          } catch (Exception e) {System.out.println("Exception: " + e.getMessage());}
          return false;
      }
-     System.out.println("DOING THIS NOW");
       return true;
    }
    public void setAddress(String address) {
@@ -69,15 +68,15 @@ public class MatchInterceptor extends InterceptorAdapter {
       } catch (Exception e) { System.out.println("Found Exception" + e.getMessage());/*report an error*/ }
       return targetString;
    }
-   public void findPatient(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
-       //String com = cg.makeCommunication(theResponse);
-       PatientFinder pf = new PatientFinder(serverAddress);
-       String patient = pf.findPatient(theResponse, json);
+   public void findPatientAndCoverage(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
+       ParameterGenerator pg = new ParameterGenerator(serverAddress);
+       String returnParameters = pg.getReturnParameters(theResponse, json);
        PrintWriter out = theResponse.getWriter();
        theResponse.setContentType("application/json");
        theResponse.setCharacterEncoding("UTF-8");
-       out.print(patient);
+       out.print(returnParameters);
        out.flush();
    }
+
 
 }
