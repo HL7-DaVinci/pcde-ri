@@ -36,10 +36,15 @@ public class ParameterGenerator {
         if (patient.getValue().equals("404") || patient.getValue().equals("413")) {
             return patient.toString();
         }
+        // At this point the UMB needs to be added to the json patient passed in and the
+        // New Health plan coverage needs to be put into the parameter resource
+        JSONWrapper patientResource = json.get("parameter").get(1);
         patient = patient.get("resource");
         // A valid singlular patient was found add the custom identifier
-        patient.put("identifier", getIdentifier(patient.get("id").toString()));
-        return createReturnParameter(patient.toString(), getCoverage(patient.get("id").toString()));
+        patientResource.get("resource").put("identifier", getIdentifier("UMB", patient.get("id").toString()));
+        System.out.println(patientResource.getValue().toString());
+        // Return the patient with the added identifier and the New Health plan coverage
+        return createReturnParameter(patientResource.getValue().toString(), json.get("parameter").get(3).getValue().toString());
     }
     public String getCoverage(String patientID) {
         // Send get for coverage resource based on beneficiary id
@@ -53,9 +58,11 @@ public class ParameterGenerator {
         }
         return "";
     }
-    public JSONWrapper getIdentifier(String identifier) {
+    public JSONWrapper getIdentifier(String type, String identifier) {
         // UMB identifier is created
-        String temp = "[{\"type\": {\"coding\": [{\"system\": \"http://hl7.davinci.org\",\"code\": \"UMB\"}]},\"system\": \"http://oldhealthplan.example.com\",\"value\": \""+ identifier + "\",\"assigner\":  {\"reference\": \"Organization/2\",\"_reference\": {\"fhir_comments\": [\"UMB is assigned by the old health plan.\"]}}}]";
+        String temp = "[{\"type\": {\"coding\": [{\"system\": \"http://hl7.davinci.org\",\"code\": \""
+            + type + "\"}]},\"system\": \"http://oldhealthplan.example.com\",\"value\": \""
+            + identifier + "\",\"assigner\":  {\"reference\": \"Organization/2\",\"_reference\": {\"fhir_comments\": [\"UMB is assigned by the old health plan.\"]}}}]";
         try {
           JSONWrapper identifierJSON = new JSONWrapper(parser.parse(temp));
           return identifierJSON;

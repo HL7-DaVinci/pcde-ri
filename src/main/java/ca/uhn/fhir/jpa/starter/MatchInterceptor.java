@@ -38,7 +38,7 @@ public class MatchInterceptor extends InterceptorAdapter {
            JSONWrapper json = new JSONWrapper((JSONObject) parser.parse(requestString));
            if (json.get("resourceType").getValue().equals("Parameters")) {
                if (json.get("parameter").get(1).get("resource").get("resourceType").getValue().equals("Patient")) {
-                   findPatientAndCoverage(json, theResponse);
+                   buildReturnParameters(json, theResponse);
                }
            } else {
                return true;
@@ -68,7 +68,7 @@ public class MatchInterceptor extends InterceptorAdapter {
       } catch (Exception e) { System.out.println("Found Exception" + e.getMessage());/*report an error*/ }
       return targetString;
    }
-   public void findPatientAndCoverage(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
+   public void buildReturnParameters(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
        ParameterGenerator pg = new ParameterGenerator(serverAddress);
        String returnParameters = pg.getReturnParameters(theResponse, json);
        PrintWriter out = theResponse.getWriter();

@@ -35,7 +35,7 @@ public class PatientFinder {
         String given = "";
         String family = "";
         String bdate = "";
-        String identifier = "";
+        ArrayList<String> identifiers = new ArrayList<String>();
         JSONParser parser = new JSONParser();
         try {
             given = name.get("given").get(0).getValue().toString();
@@ -53,14 +53,19 @@ public class PatientFinder {
             System.out.println("No birthdate");
         }
         try {
-            identifier = patientInfo.get("identifier").get(0).get("value").getValue().toString();
+            for (int i = 0; i < patientInfo.get("identifier").size(); i++) {
+                String identifier = patientInfo.get("identifier").get(i).get("value").getValue().toString();
+                identifiers.add(identifier);
+            }
         } catch(Exception e) {
-            System.out.println("No identifier");
+            System.out.println("No identifiers");
         }
         try {
           String request = "?_format=json";
-          if (!identifier.equals("")) {
-              request += "&identifier="+identifier;
+          if (identifiers.size() > 0) {
+              for (String identifier: identifiers) {
+                  request += "&identifier="+identifier;
+              }
           }
           if (!given.equals("")) {
               request += "&given="+given;
