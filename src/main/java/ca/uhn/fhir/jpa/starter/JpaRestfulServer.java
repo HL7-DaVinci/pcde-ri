@@ -21,7 +21,7 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.CorsInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.jpa.starter.CommunicationInterceptor;
-// import ca.uhn.fhir.jpa.starter.TaskInterceptor;
+import ca.uhn.fhir.jpa.starter.TaskInterceptor;
 import ca.uhn.fhir.jpa.starter.MatchInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import org.hl7.fhir.dstu3.model.Bundle;
@@ -144,6 +144,12 @@ public class JpaRestfulServer extends RestfulServer {
           MatchInterceptor matchInterceptor = new MatchInterceptor();
           matchInterceptor.setAddress(serverAddress);
           this.registerInterceptor(matchInterceptor);
+          /*
+           *  Add interceptor for Task
+           */
+           TaskInterceptor taskInterceptor = new TaskInterceptor();
+           taskInterceptor.setAddress(serverAddress);
+           this.registerInterceptor(taskInterceptor);
 
         /*
          * If you are using DSTU3+, you may want to add a terminology uploader, which allows

@@ -43,6 +43,10 @@ public class CommunicationInterceptor extends InterceptorAdapter {
                 if (json.get("payload").get(0).get("extension").get(0).get("valueCodeableConcept").get("coding").get(0).get("code").getValue().equals("pcde")) {
                     sendCommunicationResponse(json, theResponse);
                 }
+            } else if (json.get("resourceType").getValue().equals("Task")) {
+                if (json.get("code").get("coding").get(0).get("code").getValue().equals("pcde")) {
+                    sendCommunicationResponse(json, theResponse);
+                }
             } else {
                 return true;
             }
