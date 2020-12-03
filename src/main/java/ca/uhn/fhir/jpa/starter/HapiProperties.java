@@ -280,7 +280,7 @@ public class HapiProperties {
     }
 
     public static Boolean getSubscriptionRestHookEnabled() {
-        return HapiProperties.getBooleanProperty(SUBSCRIPTION_RESTHOOK_ENABLED, false);
+        return HapiProperties.getBooleanProperty(SUBSCRIPTION_RESTHOOK_ENABLED, true);
     }
 
     public static Boolean getSubscriptionWebsocketEnabled() {

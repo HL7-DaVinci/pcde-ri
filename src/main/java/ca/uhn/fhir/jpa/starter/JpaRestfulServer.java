@@ -22,6 +22,7 @@ import ca.uhn.fhir.rest.server.interceptor.CorsInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.jpa.starter.CommunicationInterceptor;
 import ca.uhn.fhir.jpa.starter.TaskInterceptor;
+// import ca.uhn.fhir.jpa.starter.SubscriptionInterceptor;
 import ca.uhn.fhir.jpa.starter.MatchInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import org.hl7.fhir.dstu3.model.Bundle;
@@ -147,9 +148,9 @@ public class JpaRestfulServer extends RestfulServer {
           /*
            *  Add interceptor for Task
            */
-           TaskInterceptor taskInterceptor = new TaskInterceptor();
-           taskInterceptor.setAddress(serverAddress);
-           this.registerInterceptor(taskInterceptor);
+         TaskInterceptor taskInterceptor = new TaskInterceptor();
+         taskInterceptor.setAddress(serverAddress);
+         this.registerInterceptor(taskInterceptor);
 
         /*
          * If you are using DSTU3+, you may want to add a terminology uploader, which allows
@@ -164,7 +165,7 @@ public class JpaRestfulServer extends RestfulServer {
 
         // If you want to enable the $trigger-subscription operation to allow
         // manual triggering of a subscription delivery, enable this provider
-        if (false) { // <-- DISABLED RIGHT NOW
+        if (true) { // <-- ENABLED RIGHT NOW
             SubscriptionTriggeringProvider retriggeringProvider = appCtx.getBean(SubscriptionTriggeringProvider.class);
             registerProvider(retriggeringProvider);
         }

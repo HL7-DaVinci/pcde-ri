@@ -69,7 +69,15 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
             resourceType.startsWith("CommunicationRequest") ||
             resourceType.startsWith("Communication") ||
             resourceType.startsWith("Task") ||
-            resourceType.startsWith("Coverage");
+            resourceType.startsWith("Coverage") ||
+            resourceType.startsWith("MedicationRequest") ||
+            resourceType.startsWith("MedicationDispense") ||
+            resourceType.startsWith("DeviceRequest") ||
+            resourceType.startsWith("ServiceRequest") ||
+            resourceType.startsWith("DocumentReference") ||
+            resourceType.startsWith("Subscription") ||
+            resourceType.startsWith("Condition") ||
+            resourceType.startsWith("AuditEvent");
     }
 
 }
