@@ -33,7 +33,7 @@ public class TaskInterceptor extends InterceptorAdapter {
      String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
      boolean putTask = theRequest.getMethod().equals("PUT")
         && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("Task")
-        && theRequest.getRequestURL().contains("PCDE");
+        && theRequest.getRequestURL().lastIndexOf("PCDE") >= 0;
      boolean postTask = endPoint.equals("Task")
         && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("PCDE");
      if (putTask || postTask) {
