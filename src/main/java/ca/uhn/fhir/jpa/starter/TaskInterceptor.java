@@ -31,7 +31,12 @@ public class TaskInterceptor extends InterceptorAdapter {
    @Override
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
      String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
-     if (endPoint.equals("Task") && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("PCDE")) {
+     boolean putTask = theRequest.getMethod().equals("PUT")
+        && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("Task")
+        && theRequest.getRequestURL().contains("PCDE");
+     boolean postTask = endPoint.equals("Task")
+        && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("PCDE");
+     if (putTask || postTask) {
          String requestString = parseRequest(theRequest);
          try {
            JSONParser parser = new JSONParser();
