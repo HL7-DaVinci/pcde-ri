@@ -58,8 +58,7 @@ public class TaskHandler {
       Search for the bundle. If it exists then update the task. Otherwise
       set the task status to fail
     */
-    public String handleTask(JSONWrapper json) {
-          JSONWrapper updatedTask = json;
+    public String handleTask(JSONWrapper json, String type) {
           String bundleID = getBundle(json.get("for").get("identifier").get("value").getValue().toString());
           JSONParser parser = new JSONParser();
           if (!bundleID.equals("")) {
@@ -76,7 +75,12 @@ public class TaskHandler {
               json.put("status", "failed");
           }
           try {
-              String response = requestHandler.sendPost(serverAddress + "/Task", json.toString());
+              String response = "";
+              if (type.equals("PUT")) {
+                  response = requestHandler.sendPut(serverAddress + "/Task/" + json.get("id"), json.toString());
+              } else {
+                  response = requestHandler.sendPost(serverAddress + "/Task", json.toString());
+              }
               JSONWrapper taskResponse = new JSONWrapper(parser.parse(response));
               return taskResponse.get("id").getValue().toString();
           } catch (Exception e) {

@@ -30,32 +30,32 @@ public class TaskInterceptor extends InterceptorAdapter {
     */
    @Override
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
-     String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
-     boolean putTask = theRequest.getMethod().equals("PUT")
-        && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("Task")
-        && theRequest.getRequestURL().lastIndexOf("PCDE") >= 0;
-     boolean postTask = endPoint.equals("Task")
-        && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("PCDE");
-     if (putTask || postTask) {
+      String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
+      boolean putTask = theRequest.getMethod().equals("PUT")
+         && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("Task")
+         && theRequest.getRequestURL().lastIndexOf("PCDE") >= 0;
+      boolean postTask = endPoint.equals("Task")
+         && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 4, theRequest.getRequestURL().lastIndexOf("/")).equals("PCDE");
+      if (putTask || postTask) {
          String requestString = parseRequest(theRequest);
          try {
            JSONParser parser = new JSONParser();
            JSONWrapper json = new JSONWrapper((JSONObject) parser.parse(requestString));
            if (json.get("resourceType").getValue().equals("Task")) {
                // At this point we have the task
-               handleTask(json, theResponse);
+               handleTask(json, theResponse, theRequest.getMethod());
            } else {
                return true;
            }
          } catch (Exception e) {System.out.println("Exception: " + e.getMessage());}
          return false;
-     }
+      }
       return true;
    }
-   public void handleTask(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
+   public void handleTask(JSONWrapper json, HttpServletResponse theResponse, String type) throws IOException {
        TaskHandler th = new TaskHandler(serverAddress);
        String originalTask = json.toString();
-       String newTaskID = th.handleTask(json);
+       String newTaskID = th.handleTask(json, type);
        theResponse.setStatus(201);
        PrintWriter out = theResponse.getWriter();
        theResponse.setContentType("application/json");

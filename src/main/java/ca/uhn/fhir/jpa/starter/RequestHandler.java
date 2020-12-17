@@ -113,4 +113,60 @@ public class RequestHandler {
         System.out.println("Response:" + response.toString());
         return response.toString();
     }
+    public String sendPut(String endPoint, String data) throws Exception {
+          String url = endPoint;
+          // Do not use this in production
+          TrustManager[] trustAllCerts = new TrustManager[] {
+             new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                  return null;
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {  }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {  }
+             }
+          };
+
+          SSLContext sc = SSLContext.getInstance("SSL");
+          sc.init(null, trustAllCerts, new java.security.SecureRandom());
+          HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+          // Create all-trusting host name verifier
+          HostnameVerifier allHostsValid = new HostnameVerifier() {
+              public boolean verify(String hostname, SSLSession session) {
+                return true;
+              }
+          };
+          // Install the all-trusting host verifier
+          HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+
+          System.out.println("Sending Put to: " + url);
+          URL obj = new URL(url);
+
+          HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+          con.setRequestMethod("PUT");
+          con.setRequestProperty("Content-Type", "application/json; utf-8");
+          con.setDoOutput(true);
+
+          try (OutputStream os = con.getOutputStream()) {
+              byte[] input = data.getBytes("utf-8");
+              os.write(input, 0, input.length);
+          } catch (Exception e) {
+              System.out.println(e);
+          }
+          int responseCode = con.getResponseCode();
+          System.out.println("Response Code: " + responseCode);
+
+          BufferedReader in = new BufferedReader(
+                  new InputStreamReader(con.getInputStream()));
+          String inputLine;
+          StringBuffer response = new StringBuffer();
+
+          while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+          }
+          in.close();
+          System.out.println("Response:" + response.toString());
+          return response.toString();
+      }
+
 }
