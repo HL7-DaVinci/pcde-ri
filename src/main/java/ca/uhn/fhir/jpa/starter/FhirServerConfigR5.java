@@ -1,12 +1,15 @@
 package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.ConfigurationException;
-import ca.uhn.fhir.jpa.config.BaseJavaConfigDstu3;
+import ca.uhn.fhir.jpa.config.BaseJavaConfigR5;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.search.lastn.ElasticsearchSvcImpl;
-import ca.uhn.fhir.jpa.starter.annotations.OnDSTU3Condition;
+import ca.uhn.fhir.jpa.starter.annotations.OnR5Condition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -15,8 +18,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Conditional(OnDSTU3Condition.class)
-public class FhirServerConfigDstu3 extends BaseJavaConfigDstu3 {
+@Conditional(OnR5Condition.class)
+public class FhirServerConfigR5 extends BaseJavaConfigR5 {
 
   @Autowired
   private DataSource myDataSource;
@@ -39,9 +42,9 @@ public class FhirServerConfigDstu3 extends BaseJavaConfigDstu3 {
 
   @Autowired
   private ConfigurableEnvironment configurableEnvironment;
-  
+
   @Override
-  @Bean
+  @Bean()
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     LocalContainerEntityManagerFactoryBean retVal = super.entityManagerFactory();
     retVal.setPersistenceUnitName("HAPI_PU");
@@ -77,5 +80,6 @@ public class FhirServerConfigDstu3 extends BaseJavaConfigDstu3 {
       return null;
     }
   }
+
 
 }

@@ -1,0 +1,15 @@
+{
+  "resourceType" : "Parameters",
+  "id" : "topic-list-single",
+  "meta" : {
+    "profile" : [
+      "http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-subscription-topic-canonical-urls"
+    ]
+  },
+  "parameter" : [
+    {
+      "name" : "subscription-topic-canonical",
+      "valueCanonical" : "http://argonautproject.org/encounters-ig/SubscriptionTopic/encounter-start"
+    }
+  ]
+}

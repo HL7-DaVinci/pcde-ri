@@ -1,5 +1,7 @@
-package ca.uhn.fhir.jpa.starter;
-import ca.uhn.fhir.rest.server.interceptor.*;
+package ca.uhn.fhir.jpa.starter.interceptors;
+import ca.uhn.fhir.interceptor.api.Hook;
+import ca.uhn.fhir.interceptor.api.Interceptor;
+import ca.uhn.fhir.interceptor.api.Pointcut;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
@@ -10,25 +12,19 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import ca.uhn.fhir.jpa.starter.TaskHandler;
-import ca.uhn.fhir.jpa.starter.PatientFinder;
 
-import ca.uhn.fhir.jpa.starter.JSONWrapper;
+import ca.uhn.fhir.jpa.starter.utils.*;
 
-public class TaskInterceptor extends InterceptorAdapter {
+@Interceptor
+public class TaskInterceptor {
 
-   private int myRequestCount;
    private String serverAddress;
-
-   public int getRequestCount() {
-      return myRequestCount;
-   }
 
    /**
     * Override the incomingRequestPostProcessed method, which is called
     * for each incoming request before any processing is done
     */
-   @Override
+   @Hook(Pointcut.SERVER_INCOMING_REQUEST_PRE_PROCESSED)
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
       String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
       boolean putTask = theRequest.getMethod().equals("PUT")

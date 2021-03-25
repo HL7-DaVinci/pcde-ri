@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter;
+package ca.uhn.fhir.jpa.starter.utils;
 import org.hl7.fhir.r4.model.*;
 import java.util.*;
 import org.json.simple.JSONArray;
@@ -10,8 +10,6 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import ca.uhn.fhir.jpa.starter.RequestHandler;
-import ca.uhn.fhir.jpa.starter.JSONWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
