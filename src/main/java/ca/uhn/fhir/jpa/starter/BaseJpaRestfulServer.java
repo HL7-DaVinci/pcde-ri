@@ -131,6 +131,10 @@ public class BaseJpaRestfulServer extends RestfulServer {
     registerProviders(resourceProviders.createProviders());
     registerProvider(jpaSystemProvider);
 
+
+    MetadataProvider metadata = new MetadataProvider(this, fhirSystemDao, myApplicationContext.getBean(DaoConfig.class), searchParamRegistry);
+    setServerConformanceProvider(metadata);
+
     FhirVersionEnum fhirVersion = fhirSystemDao.getContext().getVersion().getVersion();
     /*
      * The conformance provider exports the supported resources, search parameters, etc for

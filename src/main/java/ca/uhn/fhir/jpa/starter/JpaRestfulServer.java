@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import ca.uhn.fhir.jpa.starter.interceptors.TopicInterceptor;
 import ca.uhn.fhir.jpa.starter.interceptors.StatusInterceptor;
 import ca.uhn.fhir.jpa.starter.interceptors.SubscriptionChecker;
+import ca.uhn.fhir.jpa.starter.MetadataProvider;
 
 @Import(AppProperties.class)
 public class JpaRestfulServer extends BaseJpaRestfulServer {
@@ -25,21 +26,6 @@ public class JpaRestfulServer extends BaseJpaRestfulServer {
   @Override
   protected void initialize() throws ServletException {
     super.initialize();
-    // String serverAddress = appProperties.getServer_address();
-    // interceptorService.registerInterceptor(new TopicInterceptor());
-    // interceptorService.registerInterceptor(new StatusInterceptor());
-    // interceptorService.registerInterceptor(new SubscriptionChecker(serverAddress));
-    // Add your own customization here
-    // If subscriptions are enabled, we want to register the interceptor that
-    // will activate them and match results against them
-    ourLog.info("About the check the status of subscriptions again");
-    if (appProperties.getSubscription() != null) {
-      /*
-       * Register SubscriptionTopicInterceptor for Subscriptions
-       */
-
-
-    }
 
   }
 

@@ -80,5 +80,31 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
       return null;
     }
   }
+  @Override
+  protected boolean isSupported(String resourceType) {
+      return resourceType.startsWith("Organization")||
+          resourceType.startsWith("ClaimResponse") ||
+          resourceType.startsWith("Patient") ||
+          resourceType.startsWith("Claim") ||
+          resourceType.startsWith("CarePlan") ||
+          resourceType.startsWith("Composition") ||
+          resourceType.startsWith("CodeSystem") ||
+          resourceType.startsWith("DocumentCode") ||
+          resourceType.startsWith("StructureDefinition") ||
+          resourceType.startsWith("Bundle") ||
+          resourceType.startsWith("ValueSet") ||
+          resourceType.startsWith("CommunicationRequest") ||
+          resourceType.startsWith("Communication") ||
+          resourceType.startsWith("Task") ||
+          resourceType.startsWith("Coverage") ||
+          resourceType.startsWith("MedicationRequest") ||
+          resourceType.startsWith("MedicationDispense") ||
+          resourceType.startsWith("DeviceRequest") ||
+          resourceType.startsWith("ServiceRequest") ||
+          resourceType.startsWith("DocumentReference") ||
+          resourceType.startsWith("Subscription") ||
+          resourceType.startsWith("Condition") ||
+          resourceType.startsWith("AuditEvent");
+  }
 
 }
