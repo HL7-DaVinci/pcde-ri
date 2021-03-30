@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter;
+package ca.uhn.fhir.jpa.starter.utils;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,6 +22,28 @@ public class JSONWrapper {
                 jsonArray = (JSONArray) v;
             }
             value = v;
+        }
+    }
+    public boolean hasKey(String value) {
+        if (jsonObject == null) {
+            throw new IllegalArgumentException("Invalid key type");
+        }
+        try {
+            jsonObject.get(value);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+    public boolean hasKey(int value) {
+        if (jsonObject == null) {
+            throw new IllegalArgumentException("Invalid key type");
+        }
+        try {
+            jsonArray.get(value);
+            return true;
+        } catch(Exception e) {
+            return false;
         }
     }
     public JSONWrapper get(String value) {

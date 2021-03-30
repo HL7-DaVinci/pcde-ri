@@ -1,0 +1,54 @@
+{
+  "resourceType": "Bundle",
+  "id": "c12aca09-3c17-4468-8269-54dc6d5eb54f",
+  "meta": {
+    "lastUpdated": "2021-02-18T15:43:36.360+00:00"
+  },
+  "type": "searchset",
+  "total": 1,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://davinci-pcde-ri.logicahealth.org/fhir/Coverage?_pretty=true"
+    }
+  ],
+  "entry": [
+      {
+        "resourceType" : "Parameters",
+        "id" : "notification-status",
+        "meta" : {
+          "profile" : [
+            "http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-subscriptionstatus"
+          ]
+        },
+        "parameter" : [
+          {
+            "name" : "subscription",
+            "valueReference" : {
+              "reference" : "https://example.org/fhir/r4/Subscription/admission"
+            }
+          },
+          {
+            "name" : "topic",
+            "valueCanonical" : "http://hl7.org/SubscriptionTopic/admission"
+          },
+          {
+            "name" : "type",
+            "valueCode" : "event-notification"
+          },
+          {
+            "name" : "status",
+            "valueCode" : "active"
+          },
+          {
+            "name" : "events-since-subscription-start",
+            "valueUnsignedInt" : 310
+          },
+          {
+            "name" : "events-in-notification",
+            "valueUnsignedInt" : 1
+          }
+        ]
+      }
+  ]
+}

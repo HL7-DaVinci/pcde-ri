@@ -10,20 +10,21 @@ import ca.uhn.fhir.jpa.provider.r4.JpaConformanceProviderR4;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.CapabilityStatement.*;
 import org.hl7.fhir.r4.model.Enumerations.PublicationStatus;
-import ca.uhn.fhir.jpa.dao.DaoConfig;
-import ca.uhn.fhir.jpa.dao.IFhirSystemDao;
+import ca.uhn.fhir.jpa.api.config.DaoConfig;
+import ca.uhn.fhir.jpa.api.dao.IFhirSystemDao;
+import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamRegistry;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 
 public class MetadataProvider extends JpaConformanceProviderR4 {
-  MetadataProvider(RestfulServer theRestfulServer, IFhirSystemDao<Bundle, Meta> theSystemDao, DaoConfig theDaoConfig) {
-    super(theRestfulServer, theSystemDao, theDaoConfig);
+  MetadataProvider(RestfulServer theRestfulServer, IFhirSystemDao<Bundle, Meta> theSystemDao, DaoConfig theDaoConfig, ISearchParamRegistry spr) {
+    super(theRestfulServer, theSystemDao, theDaoConfig, spr);
     setCache(false);
   }
 
   @Override
-  public CapabilityStatement getServerConformance(HttpServletRequest theRequest) {
-    CapabilityStatement metadata = super.getServerConformance(theRequest);
+  public CapabilityStatement getServerConformance(HttpServletRequest theRequest, RequestDetails details) {
+    CapabilityStatement metadata = super.getServerConformance(theRequest, details);
     metadata.setTitle("Da Vinci PCDE Reference Implementation");
     metadata.setStatus(PublicationStatus.DRAFT);
     metadata.setExperimental(true);
@@ -50,7 +51,7 @@ public class MetadataProvider extends JpaConformanceProviderR4 {
     for(CapabilityStatementRestComponent rest : originalRests) {
       List<CapabilityStatementRestResourceComponent> resources = rest.getResource();
       for(CapabilityStatementRestResourceComponent resource : resources) {
-        if(resource.getType() == "CarePlan") {
+        if (resource.getType() == "CarePlan") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-careplan");
         } else if (resource.getType()  == "Composition") {
           resource.setProfile("http://hl7.org/fhir/us/davinci-pcde/StructureDefinition/profile-composition");

@@ -1,4 +1,3 @@
 #!/bin/sh
 
-mvn package && \
-  docker build -t pcde .
+docker build -t hapi-fhir/pcde-ri . --no-cache

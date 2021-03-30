@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter;
+package ca.uhn.fhir.jpa.starter.utils;
 import java.util.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -29,6 +29,12 @@ public class RequestHandler {
     private final String USER_AGENT = "Mozilla/5.0";
     public RequestHandler(String baseUrl) {
         this.baseUrl = baseUrl + "/";
+    }
+    public RequestHandler() {
+
+    }
+    public void setURL(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
     public String sendGet(String endPoint, String params) throws Exception {
         String url = baseUrl + endPoint + "/" + params;
