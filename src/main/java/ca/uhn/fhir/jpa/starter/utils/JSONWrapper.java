@@ -79,7 +79,7 @@ public class JSONWrapper {
     }
     public String toString() {
         if (value == null) {
-            return this.toString();
+            return "";
         }
         return value.toString();
     }

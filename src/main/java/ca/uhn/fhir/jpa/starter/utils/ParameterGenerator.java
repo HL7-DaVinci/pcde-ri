@@ -24,7 +24,7 @@ public class ParameterGenerator {
     public ParameterGenerator(String address) {
         serverAddress = address;
         patientFinder = new PatientFinder(serverAddress);
-        requestHandler = new RequestHandler(serverAddress);
+        requestHandler = new RequestHandler();
         parser = new JSONParser();
     }
     public String getReturnParameters(HttpServletResponse theResponse, JSONWrapper json) {
@@ -46,7 +46,7 @@ public class ParameterGenerator {
     public String getCoverage(String patientID) {
         // Send get for coverage resource based on beneficiary id
         try {
-          String response = requestHandler.sendGet("Coverage", "?beneficiary=" + patientID + "&_format=json");
+          String response = requestHandler.sendGet(serverAddress+"/Coverage", "?beneficiary=" + patientID + "&_format=json");
           System.out.println(response);
           JSONWrapper coverageBundle = new JSONWrapper((JSONObject) parser.parse(response));
           return coverageBundle.get("entry").get(0).get("resource").getValue().toString();

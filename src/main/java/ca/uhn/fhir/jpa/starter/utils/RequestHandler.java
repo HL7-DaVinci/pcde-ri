@@ -25,19 +25,19 @@ import java.security.cert.X509Certificate;
 
 
 public class RequestHandler {
-    String baseUrl;
+    // String baseUrl;
     private final String USER_AGENT = "Mozilla/5.0";
-    public RequestHandler(String baseUrl) {
-        this.baseUrl = baseUrl + "/";
-    }
+    // public RequestHandler(String baseUrl) {
+    //     this.baseUrl = baseUrl + "/";
+    // }
     public RequestHandler() {
 
     }
-    public void setURL(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-    public String sendGet(String endPoint, String params) throws Exception {
-        String url = baseUrl + endPoint + "/" + params;
+    // public void setURL(String baseUrl) {
+    //     this.baseUrl = baseUrl;
+    // }
+    public String sendGet(String endpoint, String params) throws Exception {
+        String url = endpoint;
         System.out.println("Sending Get to: " + url);
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -64,8 +64,8 @@ public class RequestHandler {
         return response.toString();
 
   }
-  public String sendPost(String endPoint, String data) throws Exception {
-        String url = endPoint;
+  public String sendPost(String endpoint, String data) throws Exception {
+        String url = endpoint;
         // Do not use this in production
         TrustManager[] trustAllCerts = new TrustManager[] {
            new X509TrustManager() {
@@ -119,8 +119,8 @@ public class RequestHandler {
         System.out.println("Response:" + response.toString());
         return response.toString();
     }
-    public String sendPut(String endPoint, String data) throws Exception {
-          String url = endPoint;
+    public String sendPut(String endpoint, String data) throws Exception {
+          String url = endpoint;
           // Do not use this in production
           TrustManager[] trustAllCerts = new TrustManager[] {
              new X509TrustManager() {

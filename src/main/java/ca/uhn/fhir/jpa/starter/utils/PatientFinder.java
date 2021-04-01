@@ -20,7 +20,7 @@ public class PatientFinder {
     private String serverAddress;
     public PatientFinder(String address) {
         serverAddress = address;
-        requestHandler = new RequestHandler(serverAddress);
+        requestHandler = new RequestHandler();
     }
     public String findPatient(HttpServletResponse theResponse, JSONWrapper json) {
         return findPatientAsJSON(theResponse, json).toString();
@@ -74,7 +74,7 @@ public class PatientFinder {
           if (!bdate.equals("")) {
               request += "&birthdate="+bdate;
           }
-          String patientResponse = requestHandler.sendGet("Patient", request);
+          String patientResponse = requestHandler.sendGet(serverAddress+"/Patient", request);
 
           JSONWrapper responseBundle = new JSONWrapper(parser.parse(patientResponse));
           if ((long)responseBundle.get("total").getValue() == 1) {

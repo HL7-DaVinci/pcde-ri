@@ -20,7 +20,7 @@ public class TaskHandler {
     private String serverAddress;
     public TaskHandler(String address) {
         serverAddress = address;
-        requestHandler = new RequestHandler(serverAddress);
+        requestHandler = new RequestHandler();
     }
     public String getBundle(String patientID) {
         // NOTE: This does not show how to generate the bundle, but rather focuses on the
@@ -28,7 +28,7 @@ public class TaskHandler {
         // referenced patient
         String bundleID = "";
         try {
-            String payloadBundles = requestHandler.sendGet("Bundle", "?type=document&_format=json");
+            String payloadBundles = requestHandler.sendGet(serverAddress+"/Bundle", "?type=document&_format=json");
             JSONParser parser = new JSONParser();
             JSONObject bundles = (JSONObject) parser.parse(payloadBundles);
             JSONArray entries = (JSONArray) bundles.get("entry");

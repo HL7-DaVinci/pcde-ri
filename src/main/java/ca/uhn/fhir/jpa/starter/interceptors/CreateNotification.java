@@ -8,12 +8,12 @@ import java.nio.charset.StandardCharsets;
 public class CreateNotification {
     /**
      *
-     * @return empty notification in string form
+     * @return empty notification in string form NOTE: change document to history once complete
      */
     public static String createEmptyNotification(String subscription, String url) {
           String notification = "{\"resourceType\" : \"Bundle\",\"id\" : \"notification-empty\","
             + "\"meta\" : {\"profile\" : [\"http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-subscription-notification\"]},"
-            + "\"type\" : \"history\","
+            + "\"type\" : \"document\","
             + "\"timestamp\" : \"2020-05-29T11:44:13.1882432-05:00\","
             + "\"entry\" : [{"
             + "\"fullUrl\" : \"urn:uuid:b21e4fae-ce73-45cb-8e37-1e203362b2ae\","

@@ -87,8 +87,10 @@ public class SubscriptionChecker {
     * Override the incomingRequestPreProcessed method, which is called
     * for each incoming request before any processing is done
     */
-   @Hook(Pointcut.SERVER_INCOMING_REQUEST_PRE_PROCESSED)
-   public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
+    //This probably needs to be changed to post processed since it relies on the updated resource
+    // Need to actually check resource that was posted not the ones in the server
+   @Hook(Pointcut.SERVER_INCOMING_REQUEST_POST_PROCESSED)
+   public boolean incomingRequestPostProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
      String[] parts = theRequest.getRequestURL().toString().split("/");
      myLogger.info("SUBSCRIPTION CHECKER");
      // Here is where the Subscription Topic should be evaluated
@@ -138,12 +140,15 @@ public class SubscriptionChecker {
       return notification;
   }
   private String sendNotification(JSONWrapper subscription, String notification) {
-      String endpoint = subscription.get("endpoint").toString();
+      myLogger.info("SENDING STUFF");
+      myLogger.info(subscription.toString());
+      String endpoint = subscription.get("channel").get("endpoint").toString();
+      myLogger.info(endpoint);
       // Add headers from the subscription
       String result = "";
-      requestHandler.setURL(endpoint);
+      // requestHandler.setURL(endpoint);
       try {
-          result = requestHandler.sendPost("", notification);
+          result = requestHandler.sendPost(endpoint, notification);
       } catch(Exception e) {
           myLogger.info("Error delivering notification");
       }
