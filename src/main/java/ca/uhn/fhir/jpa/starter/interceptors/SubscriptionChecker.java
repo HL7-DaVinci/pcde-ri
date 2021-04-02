@@ -60,7 +60,7 @@ public class SubscriptionChecker {
     * Constructor using a specific logger
     */
    public SubscriptionChecker() {
-       configure("localhost:8080", null);
+       configure("https://davinci-pcde-ri.logicahealth.org", null);
    }
    public SubscriptionChecker(String url, FhirContext ctx) {
       configure(url, ctx);
