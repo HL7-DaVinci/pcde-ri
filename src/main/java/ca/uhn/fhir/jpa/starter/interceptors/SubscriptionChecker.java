@@ -28,6 +28,7 @@ import ca.uhn.fhir.jpa.provider.*;
 
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.instance.model.api.*;
+// import org.hl7.fhir.dstu2.model.BaseDateTimeType;
 // import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -87,14 +88,11 @@ public class SubscriptionChecker {
     * Override the incomingRequestPreProcessed method, which is called
     * for each incoming request before any processing is done
     */
-    //This probably needs to be changed to post processed since it relies on the updated resource
-    // Need to actually check resource that was posted not the ones in the server
-   @Hook(Pointcut.SERVER_INCOMING_REQUEST_POST_PROCESSED)
+
+   @Hook(Pointcut.SERVER_OUTGOING_RESPONSE)
    public boolean incomingRequestPostProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
      String[] parts = theRequest.getRequestURL().toString().split("/");
-     myLogger.info("SUBSCRIPTION CHECKER");
      // Here is where the Subscription Topic should be evaluated
-     //
      if (theRequest.getMethod().equals("PUT")
         || theRequest.getMethod().equals("POST")
         && !parts[parts.length - 1].equals("Subscription")
@@ -102,8 +100,10 @@ public class SubscriptionChecker {
         && parts[parts.length - 1].equals("Task")) { // Server only checking Task resources
          myLogger.info("Checking active subscriptions for potential matches");
          for (JSONWrapper subscription: getAllSubscriptions()) {
-            // NOTE: The criteria needs to be evaluated against what was sent
-            sendNotification(subscription, getNotification(subscription));
+            String notification = getNotification(subscription);
+            if (!notification.equals("")) {
+                sendNotification(subscription, notification);
+            }
          }
          return true;
      }
@@ -125,6 +125,8 @@ public class SubscriptionChecker {
       }
       return retVal;
   }
+  // Gets the notification if the resouce for the subscription was updated in the last 15 seconds
+
   private String getNotification(JSONWrapper subscription) {
       myLogger.info(subscription.toString());
       List<String> criteriaList = getCriteria(subscription);
@@ -132,16 +134,43 @@ public class SubscriptionChecker {
       for (String c : criteriaList) {
           Bundle r = searchOnCriteria(c);
           for (Bundle.BundleEntryComponent e: r.getEntry()) {
-              resources.add(jparser.encodeResourceToString((IBaseResource)e.getResource()));
+              myLogger.info("TIME STAMP");
+              InstantType lastUpdated = InstantType.withCurrentTime();
+
+              String resource = jparser.encodeResourceToString((IBaseResource)e.getResource());
+              myLogger.info(resource);
+              boolean addResource = false;
+              try {
+                JSONWrapper rjw = new JSONWrapper(parser.parse(resource));
+                InstantType lastUpdated2 = new InstantType(rjw.get("meta").get("lastUpdated").toString());
+                lastUpdated2.add(Calendar.SECOND, 15);
+                Date now = new Date(System.currentTimeMillis());
+                myLogger.info(lastUpdated2.toString());
+                if (lastUpdated2.after(now)) {
+                    myLogger.info("Resource found within 15 seconds");
+                    addResource = true;
+                } else {
+                    myLogger.info("Resource found but old resource");
+                }
+              } catch(Exception ex) {
+                  myLogger.info(ex.toString());
+              }
+              myLogger.info(lastUpdated.toString());
+              if (addResource) {
+                  resources.add(jparser.encodeResourceToString((IBaseResource)e.getResource()));
+              }
           }
       }
-      String notification = CreateNotification.createResourceNotification(subscription.toString(), resources);
-      myLogger.info(notification);
+      String notification = "";
+      if (resources.size() > 0) {
+          notification = CreateNotification.createResourceNotification(subscription.toString(), resources, baseUrl + "/fhir/Subscription/admission/$status");
+      }
+      //myLogger.info(notification);
       return notification;
   }
   private String sendNotification(JSONWrapper subscription, String notification) {
       myLogger.info("SENDING STUFF");
-      myLogger.info(subscription.toString());
+      //myLogger.info(subscription.toString());
       String endpoint = subscription.get("channel").get("endpoint").toString();
       myLogger.info(endpoint);
       // Add headers from the subscription

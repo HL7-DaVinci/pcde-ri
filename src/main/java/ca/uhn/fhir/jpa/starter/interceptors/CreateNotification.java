@@ -38,17 +38,13 @@ public class CreateNotification {
         return notification;
 
     }
-    public static String createResourceNotification(String subscription, List<String> resources) {
+    public static String createResourceNotification(String subscription, List<String> resources, String url) {
+          if (resources.size() == 0) {
+              return createEmptyNotification(subscription, url);
+          }
           String str = "";
           for (String r: resources) {
               str += (r + ",");
-              // "\"request\" : {"
-              // + "\"method\" : \"POST\","
-              // + "\"url\" : \"Encounter\""
-              // + "},"
-              // + "\"response\" : {"
-              // + "\"status\" : \"201\""
-              // + "},"
           }
           if (resources.size() > 0) {
               str = str.substring(0, str.length() - 1);
@@ -61,7 +57,7 @@ public class CreateNotification {
             + "\"http://hl7.org/fhir/uv/subscriptions-backport/StructureDefinition/backport-subscription-notification\""
             + "]"
             + "},"
-            + "\"type\" : \"history\","
+            + "\"type\" : \"document\","
             + "\"timestamp\" : \"2020-05-29T11:44:13.1882432-05:00\","
             + "\"entry\" : ["
             + "{"
@@ -105,7 +101,7 @@ public class CreateNotification {
             + "},"
             + "\"request\" : {"
             + "\"method\" : \"GET\","
-            + "\"url\" : \"https://example.org/fhir/r4/Subscription/admission/$status\""
+            + "\"url\" : " + url
             + "},"
             + "\"response\" : {"
             + "\"status\" : \"200\""
