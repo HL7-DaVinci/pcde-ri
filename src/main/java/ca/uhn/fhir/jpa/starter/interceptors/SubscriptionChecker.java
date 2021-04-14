@@ -171,7 +171,7 @@ public class SubscriptionChecker {
   private String sendNotification(JSONWrapper subscription, String notification) {
       myLogger.info("SENDING STUFF");
       //myLogger.info(subscription.toString());
-      String endpoint = subscription.get("channel").get("endpoint").toString();
+      String endpoint = subscription.get("channel").get("endpoint").toString() + "/Bundle";
       myLogger.info(endpoint);
       // Add headers from the subscription
       String result = "";

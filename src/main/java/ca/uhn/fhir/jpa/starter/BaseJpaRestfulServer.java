@@ -19,8 +19,7 @@ import ca.uhn.fhir.jpa.provider.r4.JpaConformanceProviderR4;
 import ca.uhn.fhir.jpa.provider.r5.JpaConformanceProviderR5;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamRegistry;
-// import ca.uhn.fhir.jpa.subscription.util.SubscriptionDebugLogInterceptor;
-import ca.uhn.fhir.jpa.starter.backport.util.TestSubscriptionDebugLogInterceptor;
+import ca.uhn.fhir.jpa.subscription.util.SubscriptionDebugLogInterceptor;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.narrative.INarrativeGenerator;
 import ca.uhn.fhir.narrative2.NullNarrativeGenerator;
@@ -310,7 +309,7 @@ public class BaseJpaRestfulServer extends RestfulServer {
     // will activate them and match results against them
     if (appProperties.getSubscription() != null) {
       // Subscription debug logging
-      interceptorService.registerInterceptor(new TestSubscriptionDebugLogInterceptor());
+      //interceptorService.registerInterceptor(new TestSubscriptionDebugLogInterceptor());
       /*
        * Register SubscriptionTopicInterceptor for Subscriptions
        */
