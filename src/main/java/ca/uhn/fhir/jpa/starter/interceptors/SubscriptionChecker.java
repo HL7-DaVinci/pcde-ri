@@ -177,6 +177,7 @@ public class SubscriptionChecker {
       String result = "";
       // requestHandler.setURL(endpoint);
       try {
+          myLogger.info(notification);
           result = requestHandler.sendPost(endpoint, notification);
       } catch(Exception e) {
           myLogger.info("Error delivering notification");

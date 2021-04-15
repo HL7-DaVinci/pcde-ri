@@ -33,7 +33,7 @@ public class CreateNotification {
             + "{\"name\" : \"status\",\"valueCode\" : \"active\"},"
             + "{\"name\" : \"events-since-subscription-start\",\"valueUnsignedInt\" : 310},"
             + "{\"name\" : \"events-in-notification\",\"valueUnsignedInt\" : 1}]},"
-            + "\"request\" : {\"method\" : \"GET\",\"url\" :" + url
+            + "\"request\" : {\"method\" : \"GET\",\"url\" : \"" + url + "\""
             + "},\"response\" : {\"status\" : \"200\"}}]}";
         return notification;
 
@@ -101,7 +101,7 @@ public class CreateNotification {
             + "},"
             + "\"request\" : {"
             + "\"method\" : \"GET\","
-            + "\"url\" : " + url
+            + "\"url\" : \"" + url + "\""
             + "},"
             + "\"response\" : {"
             + "\"status\" : \"200\""
