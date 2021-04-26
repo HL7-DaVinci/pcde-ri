@@ -2,14 +2,18 @@ package ca.uhn.fhir.jpa.starter.interceptors;
 import ca.uhn.fhir.interceptor.api.Hook;
 import ca.uhn.fhir.interceptor.api.Interceptor;
 import ca.uhn.fhir.interceptor.api.Pointcut;
+import ca.uhn.fhir.rest.api.server.RequestDetails;
 
-import ca.uhn.fhir.jpa.searchparam.matcher.InMemoryMatchResult;
+import ca.uhn.fhir.jpa.searchparam.matcher.InMemoryResourceMatcher;
 
 import ca.uhn.fhir.rest.annotation.Search;
 
 import ca.uhn.fhir.jpa.searchparam.MatchUrlService;
 import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.jpa.searchparam.matcher.InMemoryMatchResult;
+import ca.uhn.fhir.jpa.searchparam.matcher.IndexedSearchParamExtractor;
+import ca.uhn.fhir.jpa.searchparam.extractor.ResourceIndexedSearchParams;
+
 import ca.uhn.fhir.context.FhirContext;
 
 import javax.servlet.http.HttpServletResponse;
@@ -57,6 +61,9 @@ public class SubscriptionChecker {
    private IParser jparser;
    private JSONParser parser;
 
+   private InMemoryResourceMatcher matcher;
+   private IndexedSearchParamExtractor extractor;
+
    /**
     * Constructor using a specific logger
     */
@@ -73,6 +80,8 @@ public class SubscriptionChecker {
         requestHandler = new RequestHandler();
         jparser = myCtx.newJsonParser();
         parser = new JSONParser();
+        // matcher = new InMemoryResourceMatcher();
+        // extractor = new IndexedSearchParamExtractor();
    }
    public void setBaseUrl(String url) {
       baseUrl = url;
@@ -90,7 +99,7 @@ public class SubscriptionChecker {
     */
 
    @Hook(Pointcut.SERVER_OUTGOING_RESPONSE)
-   public boolean incomingRequestPostProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
+   public boolean incomingRequestPostProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse, IBaseResource theResource, RequestDetails theDetails) {
      String[] parts = theRequest.getRequestURL().toString().split("/");
      // Here is where the Subscription Topic should be evaluated
      if (theRequest.getMethod().equals("PUT")
@@ -99,8 +108,10 @@ public class SubscriptionChecker {
         && !parts[parts.length - 2].equals("Subscription")
         && parts[parts.length - 1].equals("Task")) { // Server only checking Task resources
          myLogger.info("Checking active subscriptions for potential matches");
+         myLogger.info(jparser.encodeResourceToString(theResource));
+         myLogger.info(theResource.getIdElement().getValue());
          for (JSONWrapper subscription: getAllSubscriptions()) {
-            String notification = getNotification(subscription);
+            String notification = getNotification(subscription, theResource, theDetails);
             if (!notification.equals("")) {
                 sendNotification(subscription, notification);
             }
@@ -127,38 +138,20 @@ public class SubscriptionChecker {
   }
   // Gets the notification if the resouce for the subscription was updated in the last 15 seconds
 
-  private String getNotification(JSONWrapper subscription) {
+  private String getNotification(JSONWrapper subscription, IBaseResource theResource, RequestDetails theRequest) {
       myLogger.info(subscription.toString());
       List<String> criteriaList = getCriteria(subscription);
       List<String> resources = new ArrayList<>();
       for (String c : criteriaList) {
-          Bundle r = searchOnCriteria(c);
-          for (Bundle.BundleEntryComponent e: r.getEntry()) {
-              myLogger.info("TIME STAMP");
-              InstantType lastUpdated = InstantType.withCurrentTime();
+          myLogger.info(theResource.fhirType());
+          String criteriaWithId = c + "&_id=" + theResource.getIdElement().getValue().split("/")[1];
+          myLogger.info(criteriaWithId);
+          Bundle r = searchOnCriteria(criteriaWithId);
 
+          for (Bundle.BundleEntryComponent e: r.getEntry()) {
               String resource = jparser.encodeResourceToString((IBaseResource)e.getResource());
               myLogger.info(resource);
-              boolean addResource = false;
-              try {
-                JSONWrapper rjw = new JSONWrapper(parser.parse(resource));
-                InstantType lastUpdated2 = new InstantType(rjw.get("meta").get("lastUpdated").toString());
-                lastUpdated2.add(Calendar.SECOND, 15);
-                Date now = new Date(System.currentTimeMillis());
-                myLogger.info(lastUpdated2.toString());
-                if (lastUpdated2.after(now)) {
-                    myLogger.info("Resource found within 15 seconds");
-                    addResource = true;
-                } else {
-                    myLogger.info("Resource found but old resource");
-                }
-              } catch(Exception ex) {
-                  myLogger.info(ex.toString());
-              }
-              myLogger.info(lastUpdated.toString());
-              if (addResource) {
-                  resources.add(jparser.encodeResourceToString((IBaseResource)e.getResource()));
-              }
+              resources.add(resource);
           }
       }
       String notification = "";

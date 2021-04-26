@@ -273,7 +273,7 @@ public class BaseJpaRestfulServer extends RestfulServer {
 
     // If you want to enable the $trigger-subscription operation to allow
     // manual triggering of a subscription delivery, enable this provider
-    if (true) { // <-- ENABLED RIGHT NOW
+    if (false) { // <-- ENABLED RIGHT NOW
       registerProvider(myApplicationContext.getBean(SubscriptionTriggeringProvider.class));
     }
 

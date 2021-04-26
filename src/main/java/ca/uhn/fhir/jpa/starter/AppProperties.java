@@ -594,7 +594,7 @@ public class AppProperties {
       this.websocket_enabled = websocket_enabled;
     }
 
-    private Boolean resthook_enabled = true;
+    private Boolean resthook_enabled = false;
     private Boolean websocket_enabled = false;
     private Email email = null;
 
