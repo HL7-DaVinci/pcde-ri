@@ -26,22 +26,20 @@ public class JSONWrapper {
     }
     public boolean hasKey(String value) {
         if (jsonObject == null) {
-            throw new IllegalArgumentException("Invalid key type");
+            return false;
         }
         try {
-            jsonObject.get(value);
-            return true;
+            return jsonObject.containsKey(value) && jsonObject.get(value) != null;
         } catch(Exception e) {
             return false;
         }
     }
     public boolean hasKey(int value) {
         if (jsonObject == null) {
-            throw new IllegalArgumentException("Invalid key type");
+            return false;
         }
         try {
-            jsonArray.get(value);
-            return true;
+            return jsonArray.get(value) != null;
         } catch(Exception e) {
             return false;
         }
