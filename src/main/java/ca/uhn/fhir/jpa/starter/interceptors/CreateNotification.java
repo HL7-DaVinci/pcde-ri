@@ -107,8 +107,9 @@ public class CreateNotification {
             + "\"status\" : \"200\""
             + "}"
             + "},"
+            + "{\"resource\":"
             + str
-            + "]"
+            + "}]"
             + "}";
         return notification;
     }
