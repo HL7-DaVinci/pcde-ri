@@ -74,8 +74,7 @@ public class PatientFinder {
           if (!bdate.equals("")) {
               request += "&birthdate="+bdate;
           }
-          String patientResponse = requestHandler.sendGet(serverAddress+"/Patient", request);
-
+          String patientResponse = requestHandler.sendGet(serverAddress+"/fhir/Patient", request);
           JSONWrapper responseBundle = new JSONWrapper(parser.parse(patientResponse));
           if ((long)responseBundle.get("total").getValue() == 1) {
               return responseBundle.get("entry").get(0);
@@ -88,7 +87,7 @@ public class PatientFinder {
               return new JSONWrapper("404");
           }
         } catch (Exception e) {
-            System.out.println("Error making communication " + e);
+            System.out.println("Error finding patient " + e);
             theResponse.setStatus(404);
             return new JSONWrapper("404");
         }

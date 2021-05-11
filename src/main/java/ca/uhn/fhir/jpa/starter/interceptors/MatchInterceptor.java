@@ -18,19 +18,23 @@ import ca.uhn.fhir.jpa.starter.utils.ParameterGenerator;
 import ca.uhn.fhir.jpa.starter.utils.PatientFinder;
 import ca.uhn.fhir.jpa.starter.utils.JSONWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+
 @Interceptor
 public class MatchInterceptor {
 
    private String serverAddress;
-
+   private final Logger myLogger = LoggerFactory.getLogger(MatchInterceptor.class.getName());
    /**
     * Override the incomingRequestPostProcessed method, which is called
     * for each incoming request before any processing is done
     */
    @Hook(Pointcut.SERVER_INCOMING_REQUEST_PRE_PROCESSED)
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
-     String endPoint = theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/")+1);
-      if (endPoint.equals("$member-match") && theRequest.getRequestURL().substring(theRequest.getRequestURL().lastIndexOf("/") - 7, theRequest.getRequestURL().lastIndexOf("/")).equals("Patient")) {
+      String[] parts = theRequest.getPathInfo().split("/");
+      if (parts.length == 3 && parts[1].equals("Patient") && parts[2].equals("$member-match")) {
          String requestString = parseRequest(theRequest);
          try {
            JSONParser parser = new JSONParser();

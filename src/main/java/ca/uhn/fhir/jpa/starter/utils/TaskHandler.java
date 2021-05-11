@@ -28,7 +28,7 @@ public class TaskHandler {
         // referenced patient
         String bundleID = "";
         try {
-            String payloadBundles = requestHandler.sendGet(serverAddress+"/Bundle", "?type=document&_format=json");
+            String payloadBundles = requestHandler.sendGet(serverAddress+"/fhir/Bundle", "?type=document&_format=json");
             JSONParser parser = new JSONParser();
             JSONObject bundles = (JSONObject) parser.parse(payloadBundles);
             JSONArray entries = (JSONArray) bundles.get("entry");
@@ -75,9 +75,9 @@ public class TaskHandler {
           try {
               String response = "";
               if (type.equals("PUT")) {
-                  response = requestHandler.sendPut(serverAddress + "/Task/" + json.get("id"), json.toString());
+                  response = requestHandler.sendPut(serverAddress + "/fhir/Task/" + json.get("id"), json.toString());
               } else {
-                  response = requestHandler.sendPost(serverAddress + "/Task", json.toString());
+                  response = requestHandler.sendPost(serverAddress + "/fhir/Task", json.toString());
               }
               JSONWrapper taskResponse = new JSONWrapper(parser.parse(response));
               return taskResponse.get("id").getValue().toString();

@@ -37,8 +37,9 @@ public class RequestHandler {
     //     this.baseUrl = baseUrl;
     // }
     public String sendGet(String endpoint, String params) throws Exception {
-        String url = endpoint;
+        String url = endpoint + params;
         System.out.println("Sending Get to: " + url);
+        System.out.println("params: " + params);
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -49,7 +50,7 @@ public class RequestHandler {
         //con.setRequestProperty("User-Agent", USER_AGENT);
 
         int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("\nSending 'GET' request to URL : " + url + params);
         System.out.println("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
@@ -61,6 +62,7 @@ public class RequestHandler {
           response.append(inputLine);
         }
         in.close();
+        System.out.println("Finished Get");
         return response.toString();
 
   }
