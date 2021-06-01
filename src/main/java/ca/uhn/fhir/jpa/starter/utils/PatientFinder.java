@@ -15,13 +15,26 @@ import javax.servlet.http.HttpServletRequest;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * A class for finding a patient during $member-match
+ */
 public class PatientFinder {
     private RequestHandler requestHandler;
     private String serverAddress;
+    /**
+     * Create the patient finder
+     * @param address the address of the fhir server
+     */
     public PatientFinder(String address) {
         serverAddress = address;
         requestHandler = new RequestHandler();
     }
+    /**
+     * helper method for returning the string version of the patient
+     * @param  theResponse the reponse to be sent by the fhir server
+     * @param  json        the parameters resource sent for the $member-match operation
+     * @return             the resulting patient as JSON
+     */
     public String findPatient(HttpServletResponse theResponse, JSONWrapper json) {
         return findPatientAsJSON(theResponse, json).toString();
     }
@@ -35,6 +48,7 @@ public class PatientFinder {
         String bdate = "";
         ArrayList<String> identifiers = new ArrayList<String>();
         JSONParser parser = new JSONParser();
+        // Add as many options to the search as possible to limit results
         try {
             given = name.get("given").get(0).getValue().toString();
         } catch (Exception e) {

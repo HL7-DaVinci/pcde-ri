@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import ca.uhn.fhir.jpa.starter.interceptors.TopicInterceptor;
 import ca.uhn.fhir.jpa.starter.interceptors.StatusInterceptor;
-import ca.uhn.fhir.jpa.starter.interceptors.SubscriptionChecker;
+import ca.uhn.fhir.jpa.starter.interceptors.SubscriptionInterceptor;
 import ca.uhn.fhir.jpa.starter.interceptors.MatchInterceptor;
 import ca.uhn.fhir.jpa.starter.interceptors.TaskInterceptor;
 //import ca.uhn.fhir.jpa.starter.interceptors.StatusInterceptor;
@@ -247,7 +247,7 @@ public class BaseJpaRestfulServer extends RestfulServer {
     if (!Strings.isNullOrEmpty(serverAddress)) {
       setServerAddressStrategy(new HardcodedServerAddressStrategy(serverAddress));
     }
-    this.registerInterceptor(new SubscriptionChecker(serverAddress, ctx));
+    this.registerInterceptor(new SubscriptionInterceptor(serverAddress, ctx));
     /*
      *  Add interceptor for member match
      */

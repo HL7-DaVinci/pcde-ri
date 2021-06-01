@@ -46,10 +46,12 @@ import org.json.simple.parser.ParseException;
 import ca.uhn.fhir.jpa.starter.utils.JSONWrapper;
 import ca.uhn.fhir.jpa.starter.utils.RequestHandler;
 
+/**
+ * Class for intercepting and handling the subsciptions
+ */
 @Interceptor
-public class SubscriptionChecker {
-   // private static final String SUBSCRIPTION_DEBUG_LOG_INTERCEPTOR_PRECHECK = "SubscriptionDebugLogInterceptor_precheck";
-   private final Logger myLogger = LoggerFactory.getLogger(SubscriptionChecker.class.getName());
+public class SubscriptionInterceptor {
+   private final Logger myLogger = LoggerFactory.getLogger(SubscriptionInterceptor.class.getName());
 
  	 private FhirContext myCtx;
 
@@ -67,12 +69,18 @@ public class SubscriptionChecker {
    /**
     * Constructor using a specific logger
     */
-   public SubscriptionChecker() {
+   public SubscriptionInterceptor() {
        configure("https://davinci-pcde-ri.logicahealth.org", null);
    }
-   public SubscriptionChecker(String url, FhirContext ctx) {
+
+   public SubscriptionInterceptor(String url, FhirContext ctx) {
       configure(url, ctx);
    }
+   /**
+    * Used for constructors to initilize variables
+    * @param url The url for the fhir server
+    * @param ctx the fhir context
+    */
    private void configure(String url, FhirContext ctx) {
         baseUrl = url;
         myCtx = ctx;
@@ -80,24 +88,24 @@ public class SubscriptionChecker {
         requestHandler = new RequestHandler();
         jparser = myCtx.newJsonParser();
         parser = new JSONParser();
-        // matcher = new InMemoryResourceMatcher();
-        // extractor = new IndexedSearchParamExtractor();
    }
+   /**
+    * Set the base url
+    * @param url the url
+    */
    public void setBaseUrl(String url) {
       baseUrl = url;
    }
-
-   /*
-    *   Searches on Subscriptions based on the IDs that are provided. The status are then created
-    *   based on those subscriptions
-    */
-
-
    /**
-    * Override the incomingRequestPreProcessed method, which is called
-    * for each incoming request before any processing is done
+    * Override the incomingRequestPostProcessed method, which is called
+    * for each request after it has been processed. If it is a Task resource then the subscriptions
+    * will be checked
+    * @param theRequest
+    * @param theResponse
+    * @param theResource this is the resource that was posted to the server
+    * @param theRequest
+    * @return whether to continue
     */
-
    @Hook(Pointcut.SERVER_OUTGOING_RESPONSE)
    public boolean incomingRequestPostProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse, IBaseResource theResource, RequestDetails theDetails) {
      String[] parts = theRequest.getRequestURL().toString().split("/");
@@ -116,10 +124,13 @@ public class SubscriptionChecker {
                 sendNotification(subscription, notification);
             }
          }
-         return true;
      }
      return true;
   }
+  /**
+   * Returns a list of active subscriptions
+   * @return all active subscriptions
+   */
   public List<JSONWrapper> getAllSubscriptions() {
       myLogger.info("Checking all active subscriptions");
       // Only check the criteria on active subscriptions
@@ -136,8 +147,13 @@ public class SubscriptionChecker {
       }
       return retVal;
   }
-  // Gets the notification if the resouce for the subscription was updated in the last 15 seconds
-
+  /**
+   * Gets the notification of the resource for the subscription
+   * @param  subscription the subscription
+   * @param  theResource  the resource just that was just updated
+   * @param  theRequest
+   * @return              the notification
+   */
   private String getNotification(JSONWrapper subscription, IBaseResource theResource, RequestDetails theRequest) {
       myLogger.info(subscription.toString());
       List<String> criteriaList = getCriteria(subscription);
@@ -158,17 +174,19 @@ public class SubscriptionChecker {
       if (resources.size() > 0) {
           notification = CreateNotification.createResourceNotification(subscription.toString(), resources, baseUrl + "/fhir/Subscription/admission/$status");
       }
-      //myLogger.info(notification);
       return notification;
   }
+  /**
+   * Send the notification to the endpoint in the subscription
+   * @param  subscription the active subscription
+   * @param  notification the notification to be sent
+   * @return              the result from sending the notification
+   */
   private String sendNotification(JSONWrapper subscription, String notification) {
-      myLogger.info("SENDING STUFF");
-      //myLogger.info(subscription.toString());
       String endpoint = subscription.get("channel").get("endpoint").toString() + "/Bundle";
       myLogger.info(endpoint);
-      // Add headers from the subscription
+      //TODO:  Add headers from the subscription
       String result = "";
-      // requestHandler.setURL(endpoint);
       try {
           myLogger.info(notification);
           result = requestHandler.sendPost(endpoint, notification);
@@ -177,6 +195,11 @@ public class SubscriptionChecker {
       }
       return result;
   }
+  /**
+   * Get all the criteria from the subscription
+   * @param  sub the subscription
+   * @return     a list of criteria
+   */
   private List<String> getCriteria(JSONWrapper sub) {
       List<String> criteria = new ArrayList<>();
       // put in the default criteria
@@ -189,6 +212,11 @@ public class SubscriptionChecker {
       }
       return criteria;
   }
+  /**
+   * Search based on a criteria
+   * @param  criteria the string criteria
+   * @return          the bundle result
+   */
   public Bundle searchOnCriteria(String criteria) {
       Bundle results = client.search().byUrl(criteria)
         .returnBundle(Bundle.class)

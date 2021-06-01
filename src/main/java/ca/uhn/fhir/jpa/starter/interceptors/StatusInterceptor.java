@@ -19,7 +19,6 @@ import java.io.*;
 
 @Interceptor
 public class StatusInterceptor {
-   // private static final String SUBSCRIPTION_DEBUG_LOG_INTERCEPTOR_PRECHECK = "SubscriptionDebugLogInterceptor_precheck";
    private final Logger myLogger;
 
    /**

@@ -15,13 +15,25 @@ import javax.servlet.http.HttpServletRequest;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * The Task Handler class is designed for updating the task with the bundle outcome
+ */
 public class TaskHandler {
     private RequestHandler requestHandler;
     private String serverAddress;
+    /**
+     * Constructor the the TaskHandler
+     * @param address the address of the fhir server
+     */
     public TaskHandler(String address) {
         serverAddress = address;
         requestHandler = new RequestHandler();
     }
+    /**
+     * get the bundle for the patient
+     * @param  patientID the id of the patient
+     * @return           the bundle id as a string
+     */
     public String getBundle(String patientID) {
         // NOTE: This does not show how to generate the bundle, but rather focuses on the
         // Communication and handling of the PCDE document. It does retrieve the bundle based on the
@@ -55,6 +67,13 @@ public class TaskHandler {
     /*
       Search for the bundle. If it exists then update the task. Otherwise
       set the task status to fail
+    */
+   /**
+    * Search for the bundle. If it exists then update the task. Otherwise
+    * set the task status to fail
+    * @param  json the initial task
+    * @param  type the request type
+    * @return      the response to the request from updating the task
     */
     public String handleTask(JSONWrapper json, String type) {
           String bundleID = getBundle(json.get("for").get("identifier").get("value").getValue().toString());

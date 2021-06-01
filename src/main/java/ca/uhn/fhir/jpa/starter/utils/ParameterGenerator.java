@@ -15,18 +15,31 @@ import javax.servlet.http.HttpServletRequest;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * Generates a parameter resource for the return of $member-match
+ */
 public class ParameterGenerator {
     private RequestHandler requestHandler;
     private String serverAddress;
     private PatientFinder patientFinder;
     private JSONParser parser;
 
+    /**
+     * Create the parameter generator
+     * @param address the address of the fhir server
+     */
     public ParameterGenerator(String address) {
         serverAddress = address;
         patientFinder = new PatientFinder(serverAddress);
         requestHandler = new RequestHandler();
         parser = new JSONParser();
     }
+    /**
+     * Gets the patient and creates the return parameter
+     * @param  theResponse the reponse to be returned by the fhir server
+     * @param  json        the parameter resource with the initial patient
+     * @return             the created return parameter
+     */
     public String getReturnParameters(HttpServletResponse theResponse, JSONWrapper json) {
         // Find the patient if they exist and set the status codes of the response
         JSONWrapper patient = patientFinder.findPatientAsJSON(theResponse, json);
@@ -43,6 +56,11 @@ public class ParameterGenerator {
         // Return the patient with the added identifier and the New Health plan coverage
         return createReturnParameter(patientResource.getValue().toString(), json.get("parameter").get(3).getValue().toString());
     }
+    /**
+     * Gets the coverage resource for the patient
+     * @param  patientID the beneficiary id of the patient
+     * @return           the coverage resource
+     */
     public String getCoverage(String patientID) {
         // Send get for coverage resource based on beneficiary id
         try {
@@ -55,6 +73,12 @@ public class ParameterGenerator {
         }
         return "";
     }
+    /**
+     * Create the identifier
+     * @param  type       the code of the identifier
+     * @param  identifier the value of the identifier
+     * @return            the created json identifier
+     */
     public JSONWrapper getIdentifier(String type, String identifier) {
         // UMB identifier is created
         String temp = "[{\"type\": {\"coding\": [{\"system\": \"http://hl7.davinci.org\",\"code\": \""
@@ -68,6 +92,12 @@ public class ParameterGenerator {
         }
         return null;
     }
+    /**
+     * Create the parameters resource as json
+     * @param  patient  the patient to include in the resource
+     * @param  coverage the coverage to include in the resource
+     * @return          the parameters resource
+     */
     public String createReturnParameter(String patient, String coverage) {
         // parameters for patient and coverage are added
         String parameters = "{\"resourceType\": \"Parameters\",\"parameter\": [{\"name\": \"exact\",\"valueBoolean\": true}, " + patient+ "," + coverage + "]}";

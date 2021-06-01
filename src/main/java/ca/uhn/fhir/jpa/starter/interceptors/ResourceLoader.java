@@ -9,14 +9,18 @@ import java.nio.charset.StandardCharsets;
 
 import ca.uhn.fhir.context.ConfigurationException;
 
+/**
+ * A class for loading a static resource from a file
+ */
 public class ResourceLoader {
     /**
-     *
-     * @return file loaded from the resource containing the list of file url
+     * Loads the resource from a static file as a string
+     * @param  resource the resource to load
+     * @return          file loaded from the resource containing the list of file path
      */
     public static String loadResource(String resource) {
         try {
-          InputStream in = TopicLoader.class.getClassLoader().getResourceAsStream(resource);
+          InputStream in = ResourceLoader.class.getClassLoader().getResourceAsStream(resource);
           String text = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
           return text;
         } catch (Exception e) {

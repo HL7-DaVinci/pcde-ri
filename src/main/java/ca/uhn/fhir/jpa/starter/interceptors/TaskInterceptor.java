@@ -15,14 +15,20 @@ import org.json.simple.parser.ParseException;
 
 import ca.uhn.fhir.jpa.starter.utils.*;
 
+/**
+ *  Interceptor for processing tasks related to PCDE
+ */
 @Interceptor
 public class TaskInterceptor {
 
    private String serverAddress;
 
    /**
-    * Override the incomingRequestPostProcessed method, which is called
+    * Override the incomingRequestPreProcessed method, which is called
     * for each incoming request before any processing is done
+    * @param  theRequest  the request containing the task
+    * @param  theResponse the response to send
+    * @return             whether to continue
     */
    @Hook(Pointcut.SERVER_INCOMING_REQUEST_PRE_PROCESSED)
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
@@ -48,6 +54,13 @@ public class TaskInterceptor {
       }
       return true;
    }
+   /**
+    * Handle the task and update accordingly
+    * @param  json        the Task
+    * @param  theResponse the reponse that will be updated
+    * @param  type        the request type
+    * @throws IOException exception from the print writer
+    */
    public void handleTask(JSONWrapper json, HttpServletResponse theResponse, String type) throws IOException {
        TaskHandler th = new TaskHandler(serverAddress);
        String originalTask = json.toString();
@@ -68,9 +81,18 @@ public class TaskInterceptor {
        out.print(originalTask);
        out.flush();
    }
+   /**
+    * Set the address of the server
+    * @param address the address
+    */
    public void setAddress(String address) {
        serverAddress = address;
    }
+   /**
+    * Parse the request and return the body data
+    * @param  r the request
+    * @return   the data from the request
+    */
    public String parseRequest(HttpServletRequest r) {
       String targetString = "";
       try {

@@ -22,14 +22,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
+/**
+ * Interceptor for getting and handling the $member-match operation
+ */
 @Interceptor
 public class MatchInterceptor {
 
    private String serverAddress;
    private final Logger myLogger = LoggerFactory.getLogger(MatchInterceptor.class.getName());
+
+
    /**
-    * Override the incomingRequestPostProcessed method, which is called
+    * Override the incomingRequestPreProcessed method, which is called
     * for each incoming request before any processing is done
+    * @param  theRequest  the request to the server
+    * @param  theResponse the response from the server
+    * @return             whether to continue processing
     */
    @Hook(Pointcut.SERVER_INCOMING_REQUEST_PRE_PROCESSED)
    public boolean incomingRequestPreProcessed(HttpServletRequest theRequest, HttpServletResponse theResponse) {
@@ -51,9 +59,18 @@ public class MatchInterceptor {
      }
       return true;
    }
+   /**
+    * Set the address of the server
+    * @param address the address of the fhir server
+    */
    public void setAddress(String address) {
        serverAddress = address;
    }
+   /**
+    * process the servlet request to read out the data
+    * @param  r the request
+    * @return   the data in the request
+    */
    public String parseRequest(HttpServletRequest r) {
       String targetString = "";
       try {
@@ -71,6 +88,12 @@ public class MatchInterceptor {
       } catch (Exception e) { System.out.println("Found Exception" + e.getMessage());/*report an error*/ }
       return targetString;
    }
+   /**
+    * Build and send the return parameters for $member-match
+    * @param  json        the initial parameters resource
+    * @param  theResponse the response to return
+    * @throws IOException an error that can be thrown by the printwriter
+    */
    public void buildReturnParameters(JSONWrapper json, HttpServletResponse theResponse) throws IOException {
        ParameterGenerator pg = new ParameterGenerator(serverAddress);
        String returnParameters = pg.getReturnParameters(theResponse, json);
